@@ -1,0 +1,40 @@
+{% extends "bitcoin/base.html" %}
+{% load blog_tags %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+<h1>{{ post.title }}</h1>
+<p class="date">
+Published {{ post.publish }} by {{ post.author }}
+</p>
+{{ post.body|markdown }}
+<p>
+<a href="{% url "bitcoin:post_share" post.id %}">
+Share this post
+</a>
+</p>
+{% with comments.count as total_comments %}
+    <h2> 
+    {{total_comments}} comment {{total_comments|pluralize}}
+        </h2>
+{% endwith%}
+{% for comment in comments %}
+<div class="comment">
+<p class ="info">
+    comment {{ forloop.counter}} by {{comment.name }} {{ comment.created}}
+</p>
+{{comment.body|linebreaks}}
+</div>
+{% empty%}
+<p> There is no comment no this post yet</p>
+{% endfor%}
+{% if new_comment%}
+<h2> your comment has been added succefully </h2>
+{% else%}
+<h2> add a new comment </h2>
+<form method="Post">
+{{comment_form.as_p}}
+{% csrf_token %}
+<p> <input type="submit" value="add comment"></p>
+</form>
+{% endif%}
+{% endblock %}
